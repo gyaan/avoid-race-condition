@@ -20,9 +20,9 @@ class UserController extends Controller
             return response()->json("user not found!");
 
         //assume that user can buy only one phone
-        $soldPhoneDetails = DB::table('phones')->where('user_id','=', $userId)->first();
+        $soldPhoneDetails = DB::table('phones')->where('user_id', '=', $userId)->first();
 
-        if(!empty($soldPhoneDetails))
+        if (!empty($soldPhoneDetails))
             return response()->json("You already bought one phone. you can buy only one phone");
 
         try {
@@ -33,7 +33,7 @@ class UserController extends Controller
             //get the unSold Phone details from table and lock it for the specific user
             $unSoledPhone = DB::table('phones')->where('user_id', null)->lockForUpdate()->first();
 
-            \Log::Info("Unsold Phone Details:".json_encode($unSoledPhone,true));
+            \Log::Info("Unsold Phone Details:" . json_encode($unSoledPhone, true));
 
             //no phone remaining
             if (empty($unSoledPhone))
@@ -55,6 +55,7 @@ class UserController extends Controller
         } catch (\Exception $exception) {
             DB::rollBack(); //rollback the phone selling data
             \Log::error($exception->getMessage());
+            return response()->json('order failed!');
         }
 
     }
